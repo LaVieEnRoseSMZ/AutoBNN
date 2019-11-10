@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torchvision.transforms as transforms
+from quan_conv import QuanConv as Conv
 
 
 class VGG_Cifar10(nn.Module):
@@ -18,21 +19,21 @@ class VGG_Cifar10(nn.Module):
                       bias=False),
             nn.BatchNorm2d(out_channels[0]),
 
-            nn.Conv2d(in_channels[1], out_channels[1], kernel_size=3, padding=1, bias=False),
+            Conv(in_channels[1], out_channels[1], kernel_size=3, padding=1, bias=False),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.BatchNorm2d(out_channels[1]),
 
-            nn.Conv2d(in_channels[2], out_channels[2], kernel_size=3, padding=1, bias=False),
+            Conv(in_channels[2], out_channels[2], kernel_size=3, padding=1, bias=False),
             nn.BatchNorm2d(out_channels[2]),
 
-            nn.Conv2d(in_channels[3], out_channels[3], kernel_size=3, padding=1, bias=False),
+            Conv(in_channels[3], out_channels[3], kernel_size=3, padding=1, bias=False),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.BatchNorm2d(out_channels[3]),
 
-            nn.Conv2d(in_channels[4], out_channels[4], kernel_size=3, padding=1, bias=False),
+            Conv(in_channels[4], out_channels[4], kernel_size=3, padding=1, bias=False),
             nn.BatchNorm2d(out_channels[4]),
 
-            nn.Conv2d(in_channels[5], out_channels[5], kernel_size=3, padding=1, bias=False),
+            Conv(in_channels[5], out_channels[5], kernel_size=3, padding=1, bias=False),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.BatchNorm2d(out_channels[5]),
         )
