@@ -19,7 +19,7 @@ The implementation of VGG_Small and ResNet18 is in vgg_small.py and resnet18.py
     @inproceedings{shen2019searching, 
         title={Searching for accurate binary neural architectures},
         author={Shen, Mingzhu and Han, Kai and Xu, Chunjing and Wang, Yunhe},
-        booktitle={Proceedings of the IEEE International Conference on Computer Vision Workshops},
+        booktitle={ICCV Neural Architecture Workshop},
         pages={0--0},
         year={2019}
     }
