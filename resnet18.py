@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from .utils import load_state_dict_from_url
 from quan_conv import QuanConv as Conv
 
 
@@ -21,14 +20,10 @@ def conv1x1(in_planes, out_planes, stride=1):
 class BasicBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, inplanes, midplanes, planes,  
-                    stride=1, downsample=None):
+    def __init__(self, inplanes, midplanes, planes, stride=1, downsample=None):
         super(BasicBlock, self).__init__()
-        if norm_layer is None:
-            norm_layer = nn.BatchNorm2d
         self.conv1 = conv3x3(inplanes, midplanes, stride)
-        self.bn1 = nn.BatchNorm2d(planes)
-        self.relu = nn.ReLU(inplace=True)
+        self.bn1 = nn.BatchNorm2d(midplanes)
         self.conv2 = conv3x3(midplanes, planes)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
@@ -96,7 +91,7 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def _forward(self, x):
+    def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.maxpool(x)
