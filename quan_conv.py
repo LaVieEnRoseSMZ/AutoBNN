@@ -7,17 +7,16 @@ import torch.nn.functional as F
 	
 
 class ScaleSigner(Function):
- 	"""take a real value x, output sign(x)*E(|x|)"""
- 	@staticmethod
- 	def forward(ctx, input):
- 		return torch.sign(input) * torch.mean(torch.abs(input))
-
- 	@staticmethod
- 	def backward(ctx, grad_output):
- 		return grad_output
+	"""take a real value x, output sign(x)*E(|x|)"""
+	@staticmethod
+	def forward(ctx, input):
+		return torch.sign(input) * torch.mean(torch.abs(input))
+	@staticmethod
+	def backward(ctx, grad_output):
+		return grad_output
 
 def scale_sign(input):
- 	return ScaleSigner.apply(input)
+	return ScaleSigner.apply(input)
 
 class Quantizer(Function):
 	@staticmethod
@@ -30,7 +29,7 @@ class Quantizer(Function):
 		return grad_output, None
 
 def quantize(input, nbit):
- 	return Quantizer.apply(input, nbit)
+	return Quantizer.apply(input, nbit)
 
 def dorefa_w(w, nbit_w):
 	if nbit_w == 1:
@@ -47,33 +46,25 @@ def dorefa_a(input, nbit_a):
 
 
 class QuanConv(nn.Conv2d):
-	"""docstring for QuanConv"""
-    def __init__(self, in_channels, out_channels, kernel_size, quan_name_w='dorefa', quan_name_a='dorefa', nbit_w=1, nbit_a=1, stride=1,
-                 padding=0, dilation=1, groups=1,
-                 bias=True):
-        super(QuanConv, self).__init__(
-            in_channels, out_channels, kernel_size, stride, padding, dilation,
-            groups, bias)
-        self.nbit_w=nbit_w
-        self.nbit_a=nbit_a
-        name_w_dict={'dorefa':dorefa_w}
-        name_a_dict={'dorefa':dorefa_a}
-        self.quan_w = name_w_dict[quan_name_w]
-        self.quan_a = name_a_dict[quan_name_a]
+	def __init__(self, in_channels, out_channels, kernel_size, quan_name_w='dorefa', quan_name_a='dorefa', nbit_w=1, nbit_a=1, stride=1, padding=0, dilation=1, groups=1, bias=True):
+		super(QuanConv, self).__init__(in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias)
+		self.nbit_w=nbit_w
+		self.nbit_a=nbit_a
+		name_w_dict={'dorefa':dorefa_w}
+		name_a_dict={'dorefa':dorefa_a}
+		self.quan_w = name_w_dict[quan_name_w]
+		self.quan_a = name_a_dict[quan_name_a]
 
-    #@weak_script_method
-    def forward(self, input):
-		if self.nbit_w < 32:
+	def forward(self, input):
+		if self.nbit_w<32:
 			w = self.quan_w(self.weight, self.nbit_w)
 		else:
 			w = self.weight
 
-		if self.nbit_a < 32:
+		if self.nbit_a<32:
 			x = self.quan_a(input, self.nbit_a)
 		else:
 			x = F.relu(input)
 
-		output = F.conv2d(x, w, None, self.bias, self.stride, self.padding, self.dilation, self.groups)
-
-
-		
+		output = F.conv2d(x, w, None, self.stride, self.padding, self.dilation, self.groups)
+		return output
