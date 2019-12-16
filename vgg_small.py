@@ -38,7 +38,7 @@ class VGG_Cifar10(nn.Module):
             nn.BatchNorm2d(out_channels[5]),
         )
         self.classifier = nn.Sequential(
-            nn.Linear(self.in_planes, 1024, bias=False),
+            nn.Linear(self.in_planes, 10, bias=False),
             nn.LogSoftMax()
         )
 
